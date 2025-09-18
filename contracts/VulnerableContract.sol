@@ -12,10 +12,10 @@ contract VulnerableContract {
         uint amount = balances[msg.sender];
         require(amount > 0, "No balance to withdraw");
 
+        balances[msg.sender] = 0; // Fix: state updated before external call (Checks-Effects-Interactions pattern)
+
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Transfer failed");
-
-        balances[msg.sender] = 0; // Vulnerable: state updated after external call
     }
 
     function getBalance() public view returns (uint) {
